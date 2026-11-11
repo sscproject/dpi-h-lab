@@ -1,0 +1,8 @@
+node_modules
+dist-client
+dist-server
+.data
+.env
+.git
+reference
+internal

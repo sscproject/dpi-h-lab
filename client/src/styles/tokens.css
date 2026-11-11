@@ -1,0 +1,133 @@
+/*
+ * Design tokens (NFR-6). Every colour is a token defined in BOTH themes, and the
+ * two dark blocks must stay identical: tests/theme-contrast.test.ts enforces both
+ * rules and checks contrast for every text/background pair the UI uses.
+ * Colours follow the printed Sydney kit (SPEC §15).
+ */
+:root {
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --soft: #E6F0F2;
+  --tint: #F3F6F7;
+  --ink: #13262E;
+  --muted: #4D6670;
+  --line: #D5E0E2;
+  --field-line: #738B93;
+  --brand: #00313C;
+  --onbrand: #FFFFFF;
+  --link: #00718A;
+  --focus: #00718A;
+  --accent: #00A9CE;
+  --foundation: #2A8C82;
+  --business: #1F5F8B;
+  --dpi: #5B6F80;
+  --interop: #B08A1E;
+  --apps: #6A3A84;
+  --apps-soft: #F2ECF5;
+  --discuss: #C9971C;
+  --on-discuss: #1B1400;
+  --discuss-soft: #FBF3DE;
+  --ok: #1E7A4C;
+  --warn: #9A5F00;
+  --bad: #B0392B;
+  --on-status: #FFFFFF;
+  --star: #8A6A10;
+  --scrim: #00000066;
+  --shadow: #0000003D;
+  --foundation-soft: #EEF7F6;
+  --dpi-soft: #F1F4F6;
+  --interop-soft: #FBF6E8;
+  --regional-soft: #EAF7FB;
+  --qr-bg: #FFFFFF;
+  --qr-fg: #000000;
+  --col-need: #EEF6F5;
+  --col-status: #F9F5EA;
+  --col-scope: #EEF3FA;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1B20;
+    --surface: #15262D;
+    --soft: #1C333B;
+    --tint: #12232A;
+    --ink: #E4EEF0;
+    --muted: #9DB3BB;
+    --line: #2A3F47;
+    --field-line: #5F7A84;
+    --brand: #7FD3E3;
+    --onbrand: #0E1B20;
+    --link: #5FD0EA;
+    --focus: #5FD0EA;
+    --accent: #36C4E3;
+    --foundation: #4FB8AC;
+    --business: #6FA8D6;
+    --dpi: #9AAFBD;
+    --interop: #D9B24A;
+    --apps: #B78BD0;
+    --apps-soft: #2A2133;
+    --discuss: #E0B64A;
+    --on-discuss: #1B1400;
+    --discuss-soft: #2E2A18;
+    --ok: #4CC08A;
+    --warn: #E5A53A;
+    --bad: #F08A7A;
+    --on-status: #0E1B20;
+    --star: #E0B64A;
+    --scrim: #000000A6;
+    --shadow: #00000099;
+    --foundation-soft: #16302E;
+    --dpi-soft: #1E2A31;
+    --interop-soft: #2B2716;
+    --regional-soft: #14313A;
+    --qr-bg: #FFFFFF;
+    --qr-fg: #000000;
+    --col-need: #19302E;
+    --col-status: #2A2619;
+    --col-scope: #1A2938;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0E1B20;
+  --surface: #15262D;
+  --soft: #1C333B;
+  --tint: #12232A;
+  --ink: #E4EEF0;
+  --muted: #9DB3BB;
+  --line: #2A3F47;
+  --field-line: #5F7A84;
+  --brand: #7FD3E3;
+  --onbrand: #0E1B20;
+  --link: #5FD0EA;
+  --focus: #5FD0EA;
+  --accent: #36C4E3;
+  --foundation: #4FB8AC;
+  --business: #6FA8D6;
+  --dpi: #9AAFBD;
+  --interop: #D9B24A;
+  --apps: #B78BD0;
+  --apps-soft: #2A2133;
+  --discuss: #E0B64A;
+  --on-discuss: #1B1400;
+  --discuss-soft: #2E2A18;
+  --ok: #4CC08A;
+  --warn: #E5A53A;
+  --bad: #F08A7A;
+  --on-status: #0E1B20;
+  --star: #E0B64A;
+  --scrim: #000000A6;
+  --shadow: #00000099;
+  --foundation-soft: #16302E;
+  --dpi-soft: #1E2A31;
+  --interop-soft: #2B2716;
+  --regional-soft: #14313A;
+  --qr-bg: #FFFFFF;
+  --qr-fg: #000000;
+  --col-need: #19302E;
+  --col-status: #2A2619;
+  --col-scope: #1A2938;
+  color-scheme: dark;
+}

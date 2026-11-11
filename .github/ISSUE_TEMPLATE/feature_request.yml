@@ -1,0 +1,28 @@
+name: Improvement or new feature
+description: Suggest something that would make DPI-H Lab more useful.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would it solve?
+      description: Who needs it (team members, facilitators, admins), and in what situation?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What you'd like to happen. Sketches or screenshots welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to work on this myself (please agree the approach in this issue first)

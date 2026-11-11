@@ -1,0 +1,35 @@
+# Checks every pull request and every push to main: types, tests, content and a production build.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Content workbook builds and matches content.json
+        run: |
+          npm run content:build
+          git diff --exit-code -- content/content.json
+      - run: npm run build
+      - name: No known vulnerabilities in production dependencies
+        run: npm audit --omit=dev --audit-level=high

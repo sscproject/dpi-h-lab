@@ -1,0 +1,28 @@
+name: Content or wording
+description: A definition, prompt, glossary term or label that should be clearer or more accurate.
+labels: [content]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where does it appear?
+      placeholder: e.g. Components step, "Client Registry" definition
+    validations:
+      required: true
+  - type: textarea
+    id: now
+    attributes:
+      label: Current wording
+    validations:
+      required: true
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested wording
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why, and source
+      description: For definitions, please point to the WHO/ITU DPI-H Reference Architecture section or another source.

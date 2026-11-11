@@ -1,0 +1,48 @@
+name: Bug report
+description: Something doesn't work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. **Security problems:** please don't use this form; see SECURITY.md.
+        Please don't include real participants' names or workshop answers.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Sign in as a facilitator
+        2. Create a session with two teams
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where?
+      options:
+        - Home page or joining
+        - Team worksheet
+        - Facilitator or admin screens
+        - Exports
+        - Running it locally or deploying
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Browser and device
+      placeholder: e.g. Chrome 131 on Windows, Safari on iPhone
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or anything else

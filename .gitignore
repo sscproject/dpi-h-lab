@@ -1,0 +1,10 @@
+node_modules/
+dist-client/
+dist-server/
+.data/
+.env
+*.log
+
+# Internal material: specification, workshop prints, framework drafts. Never commit.
+internal/
+.claude/

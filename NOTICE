@@ -1,0 +1,35 @@
+DPI-H Lab
+Copyright 2026 The DPI-H Lab authors (see AUTHORS)
+
+DPI-H Lab was developed as a follow-up to the Asia-Pacific Digital Health Interoperability
+Bootcamp (Sydney, 2026), supported by the Strengthening Standards Capability Project (SSCP).
+It was authored by Umer Nisar (CSIRO SSCP) in collaboration with Rumanusina Maua (SPC) and
+Jordi Piera Jimenez.
+
+LICENCES
+- Source code: Apache License, Version 2.0 (see LICENSE).
+- Content in the content/ folder (definitions, prompts, glossary and interface wording):
+  Creative Commons Attribution 4.0 International (CC BY 4.0) (see LICENSE-CONTENT.md).
+
+REQUIRED ATTRIBUTION
+Anyone who uses, redistributes or builds on this work, in source or compiled form, must keep
+this NOTICE file and credit the authors as follows:
+
+  "Based on DPI-H Lab by Umer Nisar (CSIRO SSCP), Rumanusina Maua (SPC) and
+   Jordi Piera Jimenez (https://github.com/sscproject/dpi-h-lab),
+   licensed under Apache-2.0 (code) and CC BY 4.0 (content)."
+
+Applications built from this work that show credits, an "about" page or a footer to their
+users must include this credit there.
+
+REFERENCE FRAMEWORK
+This work is informed by the WHO/ITU "Reference Architecture and Guidance for Digital Public
+Infrastructure for the Health Sector (DPI-H)", Draft V1.0 (public consultation draft, 2026).
+It is not produced or endorsed by the World Health Organization (WHO) or the International
+Telecommunication Union (ITU). Definitions in the content workbook paraphrase that draft and
+may change when the final version is published. WHO and ITU names and emblems are not used as
+branding.
+
+THIRD-PARTY SOFTWARE
+This product includes open-source packages listed in package.json, each under its own
+licence. Bundled fonts (Roboto, Roboto Mono) are licensed under the SIL Open Font License 1.1.
