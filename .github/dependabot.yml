@@ -1,4 +1,6 @@
-# Weekly pull requests for dependency updates, grouped so they are easy to review.
+# Dependency updates as pull requests. Small (minor and patch) updates come weekly in one
+# group; major upgrades are left for a planned update, since they can need code changes.
+# Security fixes still arrive whenever they are published.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -9,6 +11,9 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -17,3 +22,7 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    ignore:
+      # Node: stay on the long-term-support line (24); move to the next LTS on purpose.
+      - dependency-name: node
+        update-types: [version-update:semver-major]
