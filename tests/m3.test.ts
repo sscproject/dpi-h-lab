@@ -21,7 +21,7 @@ let fac2Token = '';
 
 const config: Config = {
   port: 0, host: '127.0.0.1', jwtSecret: 'test-secret', contentJson: 'content/content.json',
-  clientDist: 'none', rateLimitPerMinute: 1000, publicUrl: 'https://lab.test', sweepMs: 0, idleDays: 14, codeReadDays: 90, submitGapMs: 50,
+  clientDist: 'none', rateLimitPerMinute: 1000, publicUrl: 'https://lab.test', sweepMs: 0, idleDays: 14, codeReadDays: 90, submitGapMs: 1500,
 };
 
 type Res = { statusCode: number; json: () => any; body: string; headers: Record<string, unknown> };
@@ -516,7 +516,7 @@ describe('submit with consent (Summary step)', () => {
     expect(row.submitted_at).toBeTruthy();
     // A second submission straight away is refused; after the gap it replaces the choice.
     expect((await call('POST', `/groups/${gid}/submit`, j.groupToken, { share: false })).statusCode).toBe(429);
-    await new Promise((r) => setTimeout(r, 60));
+    await new Promise((r) => setTimeout(r, 1600));
     await call('POST', `/groups/${gid}/submit`, j.groupToken, { share: false });
     row = (await db.query<{ consent: string; submitted_at: Date | null }>('SELECT consent, submitted_at FROM groups WHERE id = $1', [gid])).rows[0];
     expect(row.consent).toBe('private');
