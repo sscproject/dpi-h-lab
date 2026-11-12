@@ -1,6 +1,6 @@
 # Local trial only: the app and PostgreSQL on this machine. Not a production setup.
 # For a server, put a TLS proxy (e.g. Caddy) in front, keep the app and database ports private,
-# and use strong secrets: see "Deploying" in README.md.
+# and use strong secrets: see docs/deploying.md.
 #
 #   cp .env.example .env     # then set JWT_SECRET (and POSTGRES_PASSWORD if you like)
 #   docker compose up --build

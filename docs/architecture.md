@@ -188,3 +188,5 @@ See [SECURITY.md](../SECURITY.md) to report a vulnerability.
 ## Deployment shape
 
 The reference deployment is one small Linux server running Docker Compose: a TLS proxy (Caddy), the app container and PostgreSQL, with database backups taken off the server. One server handled a 200-person load test comfortably. Running several app instances would need a shared channel for live updates (for example PostgreSQL `LISTEN/NOTIFY`), because the live hub is in memory.
+
+See [deploying.md](deploying.md) for what a deployment needs.
