@@ -61,7 +61,9 @@ function WorksheetRoute({ code }: { code: string }) {
 
 export function App() {
   const route = useRoute();
-  if (route.name === 'worksheet') return <WorksheetRoute key={route.code} code={route.code} />;
+  // Keyed by the signed-in group too: joining from a team's link (/g/CODE) changes the session
+  // without changing the address, and the worksheet must open on that first click.
+  if (route.name === 'worksheet') return <WorksheetRoute key={`${route.code}:${store.session()?.groupId ?? ''}`} code={route.code} />;
   if (route.name === 'staff' || route.name === 'workshops' || route.name === 'adminview' || route.name === 'event' || route.name === 'print' || route.name === 'view') return <StaffApp route={route} />;
   return (
     <ContentProvider>

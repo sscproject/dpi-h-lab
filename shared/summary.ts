@@ -3,7 +3,7 @@
 
 import type { Content } from './content.js';
 import {
-  COMPONENT_IDS, DECISION_IDS, FUNDING_IDS, GAP_ROWS, GAP_STEPS, PARTNER_IDS, READINESS_IDS, STATUS_IDS, SUPPORT_IDS,
+  ARCH_LAYERS, BASIS_IDS, DECISION_IDS, FUNDING_IDS, GAP_ROWS, GAP_STEPS, PARTNER_IDS, READINESS_IDS, STATUS_IDS, SUPPORT_IDS,
 } from './ids.js';
 import { gapText, type Worksheet } from './worksheet.js';
 import { teamLabel } from './countries.js';
@@ -63,7 +63,24 @@ export function buildSummary(ws: Worksheet, content: Content): Summary {
     const v = ws[`rd.${id}`];
     if (v === 'done' || v === 'in_progress' || v === 'not_yet') counts[v]++;
   }
-  const needed = COMPONENT_IDS.filter((id) => ws[`cp.${id}.need`] === 'yes');
+  // Every component the team marked Needed on the Components step, in that step's order
+  // (the REDDHI shared data layer first), grouped by layer.
+  const neededIn = (ids: readonly string[]) => ids.filter((id) => ws[`cp.${id}.need`] === 'yes');
+  const needed = ARCH_LAYERS.flatMap((l) => l.groups.flatMap((g) => neededIn(g.ids)));
+  const assessed = needed.filter((id) => (STATUS_IDS as readonly string[]).includes(str(ws[`cp.${id}.status`])));
+  const withStatus = (id: string) => { const s = str(ws[`cp.${id}.status`]); return s ? `${label(id) || id} (${s})` : label(id) || id; };
+  const byLayer = ARCH_LAYERS.map((l) => ({ label: ui(`cp.layer.${l.key}`), ids: l.groups.flatMap((g) => neededIn(g.ids)) })).filter((l) => l.ids.length);
+  // A decision with no formal basis ("None", or the old "Unassigned" switch) or not assessed.
+  const noBasis = DECISION_IDS.filter((d) => ws[`gv.${d}.BASIS_NONE`] === true || ws[`gv.${d}.BASIS_NA`] === true || ws[`gv.${d}.unassigned`] === true);
+  const decisionOpen = DECISION_IDS.filter((d) => !str(ws[`gv.${d}.holder`]) && ws[`gv.${d}.unassigned`] !== true && !BASIS_IDS.some((b) => ws[`gv.${d}.${b}`] === true));
+  // What a reader would need before acting on the plan: flagged, not hidden behind a polished readout.
+  const todo = [
+    !str(ws['pw.priority']) && ui('sum.todo.priority'),
+    !str(ws['pw.action']) && ui('sum.todo.action'),
+    !str(ws['pw.owner']) && ui('sum.todo.owner'),
+    needed.length > assessed.length && ui('sum.todo.status', { n: String(needed.length - assessed.length) }),
+    decisionOpen.length > 0 && ui('sum.todo.decisions', { n: String(decisionOpen.length) }),
+  ].filter((x): x is string => typeof x === 'string' && !!x);
   const statusCounts = Object.fromEntries(STATUS_IDS.map((s) => [s, 0])) as Record<string, number>;
   for (const id of needed) {
     const s = str(ws[`cp.${id}.status`]);
@@ -73,10 +90,9 @@ export function buildSummary(ws: Worksheet, content: Content): Summary {
 
   const facts = [
     { label: ui('sum.readiness'), value: answered ? `${ui('rd.done')} ${counts.done} · ${ui('rd.in_progress')} ${counts.in_progress} · ${ui('rd.not_yet')} ${counts.not_yet}` : '' },
-    { label: ui('sum.gap'), value: str(ws['rd.gap']) },
-    { label: ui('sum.needed'), value: needed.map((id) => { const s = str(ws[`cp.${id}.status`]); return s ? `${label(id)} (${s})` : label(id); }).join('; ') },
+    { label: ui('sum.needed'), value: needed.length ? ui('sum.neededCount', { needed: String(needed.length), assessed: String(assessed.length) }) : '' },
+    ...byLayer.map((l) => ({ label: l.label, value: l.ids.map(withStatus).join('; ') })),
     { label: ui('sum.statusCounts'), value: needed.length ? STATUS_IDS.map((s) => `${s} ${statusCounts[s]}`).join(' · ') : '' },
-    { label: ui('sum.risk'), value: str(ws['pw.gap']) },
     { label: ui('sum.depends'), value: str(ws['pw.depends']) },
     { label: ui('sum.firstStep'), value: str(ws['rg.step']) },
     { label: ui('sum.disagreements'), value: str(ws['mp.dis']) },
@@ -85,7 +101,7 @@ export function buildSummary(ws: Worksheet, content: Content): Summary {
       value: GAP_STEPS.flatMap((s) => GAP_ROWS.filter((r) => ws[`gap.${s}.${r}.urgency`] === 'GAP_NOW').map((r) => gapText(ws, s, r, label)))
         .filter(Boolean).join('; '),
     },
-    { label: ui('sum.unassigned'), value: DECISION_IDS.filter((d) => ws[`gv.${d}.unassigned`] === true).map(label).join('; ') },
+    { label: ui('sum.unassigned'), value: noBasis.map((d) => `${label(d) || d} (${label(ws[`gv.${d}.BASIS_NA`] === true ? 'BASIS_NA' : 'BASIS_NONE') || '—'})`).join('; ') },
     {
       label: ui('sum.funding'),
       value: [...FUNDING_IDS.filter((f) => f !== 'FUND_OTHER' && ws[`pw.fund.${f}`] === true).map(label), ws['pw.fund.FUND_OTHER'] === true ? str(ws['pw.fundOther']) || label('FUND_OTHER') : '']
@@ -96,6 +112,7 @@ export function buildSummary(ws: Worksheet, content: Content): Summary {
       value: [str(ws['pw.refer']), [...PARTNER_IDS.filter((p) => p !== 'P_OTHER' && ws[`pw.referTo.${p}`] === true).map(label), ws['pw.referTo.P_OTHER'] === true ? str(ws['pw.referOther']) || label('P_OTHER') : '']
         .filter(Boolean).join(', ')].filter(Boolean).join(' → '),
     },
+    { label: ui('sum.todo'), value: todo.join('; ') },
   ].map((f) => ({ ...f, value: f.value || none }));
 
   return {

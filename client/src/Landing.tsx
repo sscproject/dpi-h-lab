@@ -156,7 +156,7 @@ export function Landing({ initialCode }: { initialCode?: string }) {
             )}
             <NamesField value={name} onChange={setName} />
             {err && <p className="err" role="alert">{err}</p>}
-            <div><button className="btn primary" type="submit" disabled={busy}>{t('join.submit')}</button></div>
+            <div><button className="btn primary" type="submit" disabled={busy} aria-busy={busy}>{busy ? t('join.busy') : t('join.submit')}</button></div>
           </form>
         </section>
       </main>
@@ -167,8 +167,8 @@ export function Landing({ initialCode }: { initialCode?: string }) {
   return (
     <main className="wrap home">
       <section className="home-center" aria-labelledby="home-title">
-        <p className="home-eyebrow">{t('app.tagline')}</p>
         <h1 id="home-title">{t('home.headline')}</h1>
+        <p className="home-lead home-impact">{t('home.impact')}</p>
         <p className="home-lead">{t('home.lead')}</p>
         <form className="codepill-form" onSubmit={onCode} autoComplete="off" noValidate>
           <div className="codepill">
@@ -181,7 +181,6 @@ export function Landing({ initialCode }: { initialCode?: string }) {
           <p id="home-err" className="err" role="alert">{err ?? ''}</p>
         </form>
         <p id="home-link" className="home-note">{t('home.link')}</p>
-        <p className="home-note">{t('home.nocode')}</p>
         <p className="home-more">
           {t('home.explore')}{' '}
           <button type="button" className="btn link" onClick={onPractice} disabled={busy}>{t('home.practice')}</button>

@@ -204,8 +204,9 @@ export function stepComplete(step: StepKey, ws: Worksheet): boolean {
     case 'map':
       return BLOCK_IDS.some((id) => filled(ws[`cp.${id}.status`]));
     case 'governance':
-      // Each decision has a named holder, or is marked unassigned (itself a finding).
-      return DECISION_IDS.every((id) => filled(ws[`gv.${id}.holder`]) || ws[`gv.${id}.unassigned`] === true);
+      // Each decision has a named holder or a formal basis ("None" and "Not assessed" are findings too).
+      // "unassigned" is from worksheets before content 1.62, when it was a separate switch.
+      return DECISION_IDS.every((id) => filled(ws[`gv.${id}.holder`]) || ws[`gv.${id}.unassigned`] === true || BASIS_IDS.some((b) => ws[`gv.${id}.${b}`] === true));
     case 'pathway':
       return filled(ws['pw.priority']) && filled(ws['pw.action']) && filled(ws['rg.component']);
     case 'summary':

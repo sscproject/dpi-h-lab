@@ -121,7 +121,8 @@ export function DefinitionsPanel({ top }: { top?: ReactNode }) {
 
   if (!wide) return null;
   const term = selected?.startsWith('term:') ? content.glossary.find((g) => g.term === selected.slice(5)) : null;
-  const it = selected && !term ? item(selected) : null;
+  const group = selected?.startsWith('cat:') ? selected.slice(4) : null;
+  const it = selected && !term && !group ? item(selected) : null;
 
   return (
     <aside className="def-panel" aria-labelledby="def-panel-title">
@@ -129,7 +130,12 @@ export function DefinitionsPanel({ top }: { top?: ReactNode }) {
       <h2 id="def-panel-title" tabIndex={-1} className="eyebrow">{t('def.title')}</h2>
       <label className="sr-only" htmlFor="def-search">{t('glossary.search')}</label>
       <input id="def-search" type="search" placeholder={t('glossary.search')} value={q} onChange={(e) => { setQ(e.target.value); select(null); }} />
-      {(it || term) ? (
+      {group ? (
+        <div className="def-card" aria-live="polite">
+          <h3>{t(`cat.${group}` as UiTextKey)}</h3>
+          <CategoryDefinitions category={group} />
+        </div>
+      ) : (it || term) ? (
         <div className="def-card" aria-live="polite">
           <h3>{it ? <>{it.display_no != null && <span className="mono muted">{it.display_no} </span>}{it.label}</> : term!.term}</h3>
           {it ? <ItemDefinition id={it.id} /> : (
@@ -155,7 +161,8 @@ export function DefinitionsPanel({ top }: { top?: ReactNode }) {
 
 function InfoPopover({ id, trigger, onClose }: { id: string; trigger: HTMLElement; onClose: () => void }) {
   const { item, t } = useContent();
-  const it = item(id)!;
+  const group = id.startsWith('cat:') ? id.slice(4) : null;
+  const it = group ? null : item(id)!;
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
@@ -203,11 +210,38 @@ function InfoPopover({ id, trigger, onClose }: { id: string; trigger: HTMLElemen
       style={pos ? { top: pos.top, left: pos.left } : { visibility: 'hidden', top: 0, left: 0 }}
     >
       <div className="ptitle">
-        <h2 id={titleId}>{it.display_no != null && <span className="mono muted">{it.display_no} </span>}{it.label}</h2>
+        <h2 id={titleId}>{it ? <>{it.display_no != null && <span className="mono muted">{it.display_no} </span>}{it.label}</> : t(`cat.${group}` as UiTextKey)}</h2>
         <button type="button" className="btn small close" onClick={onClose}>{t('info.close')}</button>
       </div>
-      <ItemDefinition id={id} />
+      {it ? <ItemDefinition id={id} /> : <CategoryDefinitions category={group!} />}
     </div>
+  );
+}
+
+/** One ⓘ for a whole set of options (e.g. Exists / Partial / Absent): all their definitions together. */
+export function CategoryInfoButton({ category, label }: { category: string; label: string }) {
+  const { t } = useContent();
+  const { show } = useContext(Ctx);
+  return (
+    <button type="button" className="info-btn" aria-haspopup="dialog" aria-label={t('info.about', { label })}
+      onClick={(e) => show(`cat:${category}`, e.currentTarget)}>
+      ⓘ
+    </button>
+  );
+}
+
+/** Every option in a category, each with its short definition. */
+function CategoryDefinitions({ category }: { category: string }) {
+  const { items } = useContent();
+  return (
+    <>
+      {items(category).map((i) => (
+        <div className="def-section" key={i.id}>
+          <p><b>{i.label}</b></p>
+          {i.short_def && <p><Md text={i.short_def} /></p>}
+        </div>
+      ))}
+    </>
   );
 }
 
