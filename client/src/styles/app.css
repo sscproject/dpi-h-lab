@@ -170,6 +170,8 @@ main { padding-block: 20px 24px; }
 .crow:last-child { border-bottom: 0; }
 .crow.headrow { background: var(--soft); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); font-weight: 700; }
 .crow.headrow > .c-need, .crow.headrow > .c-status, .crow.headrow > .c-scope { justify-content: flex-end; white-space: nowrap; }
+/* The status header carries one ⓘ for all three options, beside the label. */
+.crow.headrow > .c-status { flex-direction: row; align-items: flex-end; justify-content: center; gap: 2px; }
 .clayer { background: var(--soft); padding: 10px 12px; font: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--brand); border: 0; border-bottom: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 0; width: 100%; text-align: left; display: flex; align-items: center; gap: 12px; cursor: pointer; grid-column: 1 / -1; min-height: 44px; }
 .clayer:hover { background: var(--foundation-soft); }
 .clayer-count { margin-left: auto; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--muted); }
@@ -546,6 +548,8 @@ table.simple td { border-bottom: 1px solid var(--line); padding: 8px; vertical-a
 .home-eyebrow { margin: 0 0 10px; color: var(--muted); font-size: 16px; }
 .home-center h1 { font-size: clamp(30px, 3.6vw, 42px); line-height: 1.2; margin: 0 0 14px; color: var(--ink); }
 .home-lead { font-size: clamp(18px, 1.7vw, 21px); line-height: 1.55; color: var(--muted); margin: 0 auto 30px; max-width: 580px; }
+/* The impact line sits between the title and the lead: stronger, and closer to the lead. */
+.home-lead.home-impact { color: var(--ink); font-weight: 500; margin-bottom: 12px; }
 .codepill-form { max-width: 520px; margin: 0 auto; }
 .codepill { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--field-line); border-radius: 999px; padding: 6px 6px 6px 20px; }
 .codepill:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }

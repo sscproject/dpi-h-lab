@@ -25,6 +25,12 @@ export async function activeContentVersion(db: Db): Promise<string | null> {
 }
 
 export async function getContent(db: Db, version: string): Promise<Content | null> {
-  const { rows } = await db.query<{ json: Content }>('SELECT json FROM content_versions WHERE version = $1', [version]);
-  return rows[0]?.json ?? null;
+  const { rows } = await db.query<{ json: Content; is_active: boolean }>('SELECT json, is_active FROM content_versions WHERE version = $1', [version]);
+  const c = rows[0];
+  if (!c) return null;
+  if (c.is_active) return c.json;
+  // An older version keeps its own wording, but interface text added since (e.g. a new Summary
+  // line) comes from the active version, as the app does in the browser.
+  const { rows: active } = await db.query<{ json: Content }>('SELECT json FROM content_versions WHERE is_active');
+  return active[0] ? { ...c.json, ui_text: { ...active[0].json.ui_text, ...c.json.ui_text } } : c.json;
 }

@@ -5,7 +5,7 @@ import { Fragment, useState, type ReactNode } from 'react';
 import { countryName, representedCountry } from '../../../shared/countries';
 import { ARCH_LAYERS, READINESS_IDS, READINESS_VALUES, type ArchLayer, type StepKey } from '../../../shared/ids';
 import { ChoiceChips, MultiChoiceChips, TextField, type ChoiceOption } from '../components/Fields';
-import { InfoButton, Term } from '../components/Info';
+import { CategoryInfoButton, InfoButton, Term } from '../components/Info';
 import { Md, useContent } from '../content';
 import { GapStrip } from './generic';
 import { StepTimer } from './StepTimer';
@@ -217,11 +217,12 @@ export function ComponentsStep() {
   return (
     <>
       <div className="ctable">
-        <div className="crow headrow" aria-hidden="true">
-          <span className="c-name">{t('cp.col.component')} · {t('cp.col.what')}</span>
-          <span className="c-need">{t('cp.col.need')}</span>
-          <span className="c-status">{t('cp.col.status')}</span>
-          <span className="c-scope">{t('cp.col.scope')}</span>
+        <div className="crow headrow">
+          <span className="c-name" aria-hidden="true">{t('cp.col.component')} · {t('cp.col.what')}</span>
+          <span className="c-need" aria-hidden="true">{t('cp.col.need')}</span>
+          {/* One ⓘ for the column: Exists, Partial and Absent defined together. */}
+          <span className="c-status"><span aria-hidden="true">{t('cp.col.status')}</span> <CategoryInfoButton category="status" label={t('cp.col.status')} /></span>
+          <span className="c-scope" aria-hidden="true">{t('cp.col.scope')}</span>
         </div>
         {ARCH_LAYERS.map(layer)}
       </div>

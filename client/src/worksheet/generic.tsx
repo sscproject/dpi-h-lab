@@ -6,7 +6,7 @@
 
 import { useId, useState } from 'react';
 import {
-  ASSESS_IDS, BASIS_IDS, DECISION_IDS, GAP_PATTERN_IDS, GAP_ROWS, GAP_STEPS, LEGAL_IDS, LEGAL_VALUES, LEVER_IDS,
+  ASSESS_IDS, BASIS_ALONE, BASIS_IDS, DECISION_IDS, GAP_PATTERN_IDS, GAP_ROWS, GAP_STEPS, LEGAL_IDS, LEGAL_VALUES, LEVER_IDS,
 } from '../../../shared/ids';
 import { gapText } from '../../../shared/worksheet';
 import { ChoiceChips, TextField, ToggleChip, type ChoiceOption } from '../components/Fields';
@@ -42,7 +42,7 @@ function GapPick({ step, prefix, row, n }: { step: PickStep; prefix: string; row
   const found = step === 'readiness'
     ? items('readiness').filter((i) => ws.values[`rd.${i.id}`] === 'not_yet')
     : step === 'governance'
-      ? items('decision').filter((i) => ws.values[`gv.${i.id}.BASIS_NONE`] === true)
+      ? items('decision').filter((i) => ws.values[`gv.${i.id}.BASIS_NONE`] === true || ws.values[`gv.${i.id}.unassigned`] === true)
       : ASSESS_IDS.filter((c) => ws.values[`cp.${c}.status`] === 'A' && ws.values[`cp.${c}.need`] !== 'no').map((c) => item(c)).filter((i): i is NonNullable<typeof i> => Boolean(i));
   const free = found.filter((i) => !takenElsewhere.has(i.id));
   // Keep a past pick visible even if its answer above has since changed.
@@ -143,9 +143,43 @@ export function GapStrip({ step }: { step: GapStep }) {
   );
 }
 
+/**
+ * A decision's formal basis: Law, Decree and TWG can go together; None and Not assessed stand
+ * alone, so choosing one clears the rest. The old "Unassigned" switch (before content 1.62)
+ * shows as None and is cleared on any change.
+ */
+function BasisChips({ decision }: { decision: string }) {
+  const { items } = useContent();
+  const ws = useWs();
+  const p = (b: string) => `gv.${decision}.${b}`;
+  const legacy = p('unassigned');
+  const isOn = (b: string) => ws.values[p(b)] === true || (b === 'BASIS_NONE' && ws.values[legacy] === true);
+  const toggle = (b: string) => {
+    const wasOn = isOn(b);
+    if (ws.values[legacy] === true) ws.set(legacy, null);
+    if (wasOn) { if (ws.values[p(b)] === true) ws.set(p(b), null); return; }
+    for (const other of BASIS_IDS) {
+      if (other !== b && ws.values[p(other)] === true && (BASIS_ALONE.includes(b) || BASIS_ALONE.includes(other))) ws.set(p(other), null);
+    }
+    ws.set(p(b), true);
+  };
+  return (
+    <div className="chips">
+      {BASIS_IDS.map((b) => (
+        <span key={b} className="row" style={{ gap: 2 }}>
+          <button type="button" className="chip" aria-pressed={isOn(b)} disabled={ws.readOnly} onClick={() => toggle(b)}>
+            {items('basis').find((x) => x.id === b)?.label ?? b}
+          </button>
+          <InfoButton id={b} />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /** Step "Who decides" (Bangkok Sheet 4, part 2): name, don't decide. */
 export function GovernanceStep() {
-  const { item, items, t } = useContent();
+  const { item, t } = useContent();
   const ws = useWs();
   const legalOpts: ChoiceOption[] = LEGAL_VALUES.map((v) => ({ value: v, label: t(`legal.${v}`), className: v === 'yes' ? 'done' : v === 'partly' ? 'in_progress' : 'not_yet' }));
   return (
@@ -153,19 +187,16 @@ export function GovernanceStep() {
       <div className="decisions">
         {DECISION_IDS.map((id) => {
           const d = item(id);
-          const unassigned = ws.values[`gv.${id}.unassigned`] === true;
+          const none = ws.values[`gv.${id}.BASIS_NONE`] === true || ws.values[`gv.${id}.unassigned`] === true;
           return (
-            <section key={id} className={`decision${unassigned ? ' unassigned' : ''}`} aria-label={d?.label ?? id}>
+            <section key={id} className={`decision${none ? ' unassigned' : ''}`} aria-label={d?.label ?? id}>
               <h3 className="row" style={{ gap: 2 }}><Term id={id} /></h3>
               {d?.short_def && <p className="what">{d.short_def}</p>}
               <TextField path={`gv.${id}.holder`} label={t('gv.holder')} placeholder={t('gv.holder.placeholder')} />
               <div className="f">
                 <span className="lab">{t('gv.basis')}</span>
-                <div className="chips">
-                  {BASIS_IDS.map((b) => <ToggleChip key={b} path={`gv.${id}.${b}`} label={items('basis').find((x) => x.id === b)?.label ?? b} infoId={b} />)}
-                </div>
+                <BasisChips decision={id} />
               </div>
-              <div><ToggleChip path={`gv.${id}.unassigned`} label={t('gv.unassigned')} /></div>
             </section>
           );
         })}

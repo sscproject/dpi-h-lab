@@ -85,7 +85,9 @@ export const GAP_PATTERN_IDS = ['NARROW', 'SHARED', 'BORROWED'] as const;
 
 /** "Who decides": the four decisions, their formal basis, legal basis and levers. */
 export const DECISION_IDS = ['DEC_ARCH', 'DEC_STD', 'DEC_CDS', 'DEC_TRUST'] as const;
-export const BASIS_IDS = ['BASIS_LAW', 'BASIS_DECREE', 'BASIS_TWG', 'BASIS_NONE'] as const;
+export const BASIS_IDS = ['BASIS_LAW', 'BASIS_DECREE', 'BASIS_TWG', 'BASIS_NONE', 'BASIS_NA'] as const;
+/** Formal-basis answers that stand alone: choosing one clears the others. */
+export const BASIS_ALONE: readonly string[] = ['BASIS_NONE', 'BASIS_NA'];
 export const LEGAL_IDS = ['LEG_DATA', 'LEG_XBORDER', 'LEG_MINORS'] as const;
 export const LEGAL_VALUES = ['yes', 'partly', 'no'] as const;
 export const LEVER_IDS = ['LEV_PROC', 'LEV_TWG', 'LEV_FIN', 'LEV_REG', 'LEV_CERT'] as const;
